@@ -1,0 +1,206 @@
+@model appAPP.Models.MasterAddkViewModel
+
+<input name="TotalPages" type="hidden" value="@(Model.TotalPages)" />
+<input name="TotalRows" type="hidden" value="@(Model.TotalRows)" />
+<input name="PageRows" type="hidden" value="@(Model.PageRows)" />
+
+
+<script src="../js/MasterAddk.js?v=@(Guid.NewGuid())" type="text/javascript"></script>
+<script src="../js/MasterAddkResults.js?v=@(Guid.NewGuid())" type="text/javascript"></script>
+
+<script language="javascript" type="text/javascript">
+
+    var MasterAddkDetailURL = '@Url.Action("MasterAddkDetail","MasterAddk")';
+    var MasterAddkDetailShowURL = '@Url.Action("MasterAddkShow","MasterAddk")';
+    var MasterAddkDetailTabURL = '@Url.Action("MasterAddkTab","MasterAddk")';
+
+</script>
+
+<div align="left">
+
+
+    @if (ViewData["scripts"] != null)
+    {
+        if (Model.TotalRows == 0)
+        {
+            <table style="width: 100%">
+                <tr>
+                    <td colspan="1" style="width: 70%; margin-bottom: 12px; padding-bottom: 12px;padding-top: 8px;">
+                        <span style="font-size: 10px; font-weight:bold; font-family: Arial;">No Table attributes Found.</span>
+                        <br />
+
+                    </td>
+                    <td colspan="1" style="width: 30%">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        }
+        else
+        {
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped responsive-utilities">
+                    <thead>
+                        <tr>
+                            <th style="font-size: 12px; font-weight: normal;">
+                                Primary Key
+                            </th>
+                            <th style="font-size: 12px; font-weight: normal;">
+                                Column 1
+                            </th>
+                            <th style="font-size: 12px; font-weight: normal;">
+                                Column 2
+                            </th>
+                            <th style="font-size: 12px; font-weight: normal;">
+                                Column 3
+                            </th>
+                            <th style="font-size: 12px; font-weight: normal;">
+                                Column 4
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="is-visible">
+                                <input style="font-size: 12px; width: 130px;font-weight: bold;display:none;" name="primarykeyOLD" type="text" id="primarykeyOLD" value="NAME_ID" size="15" />
+
+                                <select name="primarykeysel" id="primarykeysel" style="font-size: 12px">
+                                    @foreach (var recList2377k in (IEnumerable<appMODEL.MasterAddk>)ViewData["scripts"])
+                                    {
+                                    <option style="font-size: 12px" value="@(Html.Encode(recList2377k.Field_Name))~@(Html.Encode(recList2377k.Data_Type))">@(Html.Encode(recList2377k.Field_Name))</option>
+                                    }
+                                </select>
+
+                                <br />
+                                <select id="Select2" name="childcolumn177type" style="font-size: 11px; color: #800080;display:none;">
+                                    <option selected value="BigInt">BigInt</option>
+                                    <option value="Integer">Integer</option>
+                                </select>
+                            </td>
+                            <td class="is-visible">
+                                <input style="font-size: 12px; width: 130px;font-weight: bold;display:none;" name="column1OLD" type="text" id="column1OLD" value="Firstname" size="10" />
+
+                                <select name="column1sel" id="column1sel" style="font-size: 12px">
+                                    @foreach (var recList2377kk in (IEnumerable<appMODEL.MasterAddk>)ViewData["scripts"])
+                                    {
+                                        <option style="font-size: 12px" value="@(Html.Encode(recList2377kk.Field_Name))~@(Html.Encode(recList2377kk.Data_Type))">@(Html.Encode(recList2377kk.Field_Name))</option>
+                                    }
+                                </select>
+                            
+                                <br />
+                                <select id="column1typesel" name="column1typesel" style="font-size: 10px; display: none; color: #800080;">
+                                    <option selected value="Char">Char</option>
+                                    <option value="Date">Date</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="Decimal">Decimal</option>
+                                </select>
+                            </td>
+                            <td class="is-visible">
+                                <input style="font-size: 12px; width: 110px;display:none;" name="column2OLD" type="text" id="column2OLD" value="Lastname" size="10" />
+
+                                <select name="column2sel" id="column2sel" style="font-size: 12px">
+                                    @foreach (var recList2377kkk in (IEnumerable<appMODEL.MasterAddk>)ViewData["scripts"])
+                                    {
+                                        <option style="font-size: 12px" value="@(Html.Encode(recList2377kkk.Field_Name))~@(Html.Encode(recList2377kkk.Data_Type))">@(Html.Encode(recList2377kkk.Field_Name))</option>
+                                    }
+                                </select>
+
+                                <br />
+                                <select id="column2type" name="column2type" style="font-size: 10px; color: #800080;display: none;">
+                                    <option selected value="Char">Char</option>
+                                    <option value="Date">Date</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="Decimal">Decimal</option>
+                                </select>
+                            </td>
+                            <td class="is-visible">
+                                <input style="font-size: 12px; width: 110px;display:none;" name="column3OLD" type="text" id="column3OLD" value="Date_of_birth" size="10" />
+
+                                <select name="column3sel" id="column3sel" style="font-size: 12px">
+                                    @foreach (var recList2388kkk in (IEnumerable<appMODEL.MasterAddk>)ViewData["scripts"])
+                                    {
+                                        <option style="font-size: 12px" value="@(Html.Encode(recList2388kkk.Field_Name))~@(Html.Encode(recList2388kkk.Data_Type))">@(Html.Encode(recList2388kkk.Field_Name))</option>
+                                    }
+                                </select>
+
+                                <br />
+                                <select id="column3type" name="column3type" style="font-size: 10px; color: #800080;display: none;">
+                                    <option value="Char">Char</option>
+                                    <option selected value="Date">Date</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="Decimal">Decimal</option>
+                                </select>
+                            </td>
+                            <td class="is-visible">
+                                <input style="font-size: 12px; width: 110px;display:none;" name="column4OLD" type="text" id="column4OLD" value="Update_Date" size="10" />
+
+                                <select name="column4sel" id="column4sel" style="font-size: 12px">
+                                    @foreach (var recList2399kkk in (IEnumerable<appMODEL.MasterAddk>)ViewData["scripts"])
+                                    {
+                                        <option style="font-size: 12px" value="@(Html.Encode(recList2399kkk.Field_Name))~@(Html.Encode(recList2399kkk.Data_Type))">@(Html.Encode(recList2399kkk.Field_Name))</option>
+                                    }
+                                </select>
+
+                                <br />
+                                <select id="column4type" name="column4type" style="font-size: 10px; color: #800080;display: none;">
+                                    <option value="Char">Char</option>
+                                    <option selected value="Date">Date</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="Decimal">Decimal</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <table border="0" style="width:90%;">
+                <tr>
+                    <td align="center">
+                        <table border="0" style="width:100%;">
+                            <tr>
+                                <td align="right" style="width:50%;">
+                                    <div style="height:15px;">
+                                        &nbsp;
+                                    </div>
+
+                                    <span style="font-weight:bold; font-family:Arial;font-size:13px;padding-right:7px;display:none;"> ParentAdd </span>
+                                    <input style="font-size:14px; float:left; display:block; padding-left: 20px; margin-left: 20px;font-weight:bold;" id="btnGenerate" type="button" class="btn-lg btn-info" value="Generate Code" onclick="GenerateCodeinMaster();" />
+
+                                    <div style="height:160px;">
+                                        &nbsp;
+                                    </div>
+                                </td>
+                                <td style="width:50%;">
+
+                                    <div style="height:15px;">
+                                        &nbsp;
+                                    </div>
+
+                                    <input style="font-size:12px; float:left; display:block; padding-left: 10px; margin-left: 20px;" id="btnGenerateDEL" type="button" class="btn-xs btn-danger" value="Delete Generated Code only, NOT DB Table" onclick="GenerateCodeinDELMaster();" />
+
+                                    <input type="button" value="New" class="btn btn-success btn-xs" onclick="ParentAddPopDialog(-1, 0)" style="font-family: Arial; font-size: 10px;display:none;" title="Create New Names130" />
+
+                                    <div style="height:160px;">
+                                        &nbsp;
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+        }
+    }
+
+
+</div>
+

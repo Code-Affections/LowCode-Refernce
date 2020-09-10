@@ -1,0 +1,48 @@
+@model appAPP.Models.MasterAddkViewModel
+
+@{
+    ViewBag.Title = "Scripts";
+}
+
+<script language="javascript" type="text/javascript">
+
+    $(MasterAddkpageReady);
+
+    function MasterAddkpageReady() {
+
+        //NOTE:- Start of searching processing
+        MasterAddkStartSearch();  // Is in MasterAddk.cshtml
+
+        $.ajaxSetup({ cache: false });   //stop caching, as querying current database data everytime of a POST, not what has been cached
+
+        // jQuery Date setup in Search criteria form
+        $(function () {
+
+
+
+
+
+            //$("#MasterAddkFormtopdiv [name=Length_Size_Str]").datepicker('setDate', '+0d');   //set now as default date
+
+
+            //------------------------------------------------------------------------------------------------
+            //Next is Calendar with times as well, optional
+            //------------------------------------------------------------------------------------------------
+            //    timeFormat: "hh:mm:ss tt",
+            //     dateFormat: "dd-M-yy"
+            //});
+            //------------------------------------------------------------------------------------------------
+            //ENDCalendar with times as well, optional
+            //------------------------------------------------------------------------------------------------
+
+
+        });
+
+    }
+    //END of pageReady
+
+
+</script>
+
+<partial name="MasterAddk" model="Model" />
+

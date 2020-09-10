@@ -1,0 +1,752 @@
+@model appAPP.Models.MasterAddkViewModel
+
+
+<style type="text/css">
+
+    #ui-datepicker-div {
+        z-index: 9999999;
+    }
+
+    /* Changes Calendar size */
+    .ui-datepicker {
+        font-size: 9pt !important
+    }
+
+
+    /* The Modal (background) */
+    .modalk {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place or can be absolute */
+        z-index: 1; /* Sit on top */
+        padding-top: 112px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: hidden; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-contentk {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 85%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    .modal-bodyk {
+        padding: 2px 6px;
+    }
+
+    .closebtn {
+        font-size: 17px;
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+        padding-right: 7px;
+    }
+
+        .closebtn:hover {
+            text-decoration: none;
+        }
+</style>
+
+
+
+<script language="javascript" type="text/javascript">
+
+      //Url.Action(Action, Controller)
+    var MasterAddkGetURL = '@Url.Action("MasterAddkSearch","MasterAddk")';
+
+    //Url.Action(Action, Contoller)
+    var urlInsert7 = '@Url.Action("ReloadAdd","Home")';
+    var urlInsert7DEL = '@Url.Action("ReloadDel","Home")';
+
+    //var MasterAddkformData;
+    function MasterAddkPostSearchToServer() {
+        //alert("in MasterAddkPostSearchToServer " + MasterAddkGetURL);
+        try {
+
+            $.ajax(MasterAddkGetURL, {
+                type: 'GET',
+                data: MasterAddkListformData,
+                success: function (data, status, xhr) {
+                    MasterAddkGetShowData(data);
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    alert(" errorMessage is:- " + errorMessage + "\n Xhr.status is :- " + jqXhr.status + "\n Xhr.responseText is :- " + jqXhr.responseText + "\n textStatus is :- " + textStatus);
+                }
+
+            });
+
+        }
+        catch (err) {
+            alert("err message " + err.message);
+        }
+
+    }
+
+
+
+    function MasterAddkGetShowData(MasterAddkreturnHtml) {
+        //alert("in MasterAddPostSearchToServer " + MasterAddGetURL);
+        try {
+
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+
+            //from now on down, the next lines are run after ajax call to Controller and subsequent database retrieval of records
+            $("#MasterAddkDivSearchResults").html('');
+            $("#MasterAddkDivSearchResults").append(MasterAddkreturnHtml);
+
+            var currentPageNumber = $("#MasterAddkFormtopdiv [name=CurrentPageNumber]").val();
+            var totalPages = $("#MasterAddkFormtopdiv [name=TotalPages]").val();
+            var totalRows = $("#MasterAddkFormtopdiv [name=TotalRows]").val();
+
+            if (totalPages > 0)
+                MasterAddkSetPagingLinks(currentPageNumber, totalPages);
+
+            if (totalRows == 1) {
+                var intPKIDD = $("#MasterAddkFormtopdiv #MasterAddkPK_IDD1").val();
+                //MasterAddkShowChild(intPKIDD, 3, intPKIDD);   //expand 1 row automatically
+            }
+
+            if ($("#MasterAddkFormtopdiv [name=PageSizeNEW]").length != 0) {
+                var intPagesize = $("#MasterAddkFormtopdiv [name=PageSize]").val();
+                $("#MasterAddkFormtopdiv [name=PageSizeNEW]").val(intPagesize);
+            }
+
+            //Next is so to highlight row in grid that has been either updated or added
+           // i/f //($("#MasterAddkFormtopdiv [name=NAME_ID]").val() != 0) {
+//MasterAddknewrowhighlight();
+            //}
+
+            //$("#idDivMasterAddkTBody").scrollTop(2);   //scroll down a little, for auto scrolling ONLY. Optional, take out if no auto scrolling
+
+            var currentSortBy = $("#MasterAddkFormtopdiv [name=SortBy]").val();
+            var currentSortAsc = $("#MasterAddkFormtopdiv [name=SortAscendingDescending]").val();
+
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            //Next part is for showing SORT up and down arrows on each sorted grid column
+            //Not much change needed really, but depends on how many columns. This code does 6 by default
+            if (currentSortBy == "MasterAddkFirstCol") {
+                MasterAddkHighlightCol('MasterAddkFirstCol');  //highlight column
+
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=FirstColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=FirstColASC]").css("display", "inline-block");
+                }
+            }
+            if (currentSortBy == "MasterAddkSecondCol") {
+                MasterAddkHighlightCol('MasterAddkSecondCol');
+
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=SecondColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=SecondColASC]").css("display", "inline-block");
+                }
+            }
+            if (currentSortBy == "MasterAddkThirdCol") {
+                MasterAddkHighlightCol('MasterAddkThirdCol');
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=ThirdColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=ThirdColASC]").css("display", "inline-block");
+                }
+            }
+            if (currentSortBy == "MasterAddkFourthCol") {
+                MasterAddkHighlightCol('MasterAddkFourthCol');
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=FourthColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=FourthColASC]").css("display", "inline-block");
+                }
+            }
+            if (currentSortBy == "MasterAddkFifthCol" || currentSortBy == "") {   //default Sort column  NOTE WELL (can be changed)
+                MasterAddkHighlightCol('MasterAddkFifthCol');
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=FifthColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=FifthColASC]").css("display", "inline-block");
+                }
+            }
+            if (currentSortBy == "MasterAddkSixthCol") {
+                MasterAddkHighlightCol('MasterAddkSixthCol');
+                if (currentSortAsc == "DESC") {
+                    $("#MasterAddkFormtopdiv [name=SixthColDESC]").css("display", "inline-block");
+                }
+                else {
+                    $("#MasterAddkFormtopdiv [name=SixthColASC]").css("display", "inline-block");
+                }
+            }
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            var CurrentRowNo = $("#MasterAddkFormtopdiv [name=CurrentRowNumber]").val();
+            if (CurrentRowNo > 1) {
+                //MasterAddkresetablebg();                //reset grid table back to default  NEED?
+                //MasterAddkrowhighlight(CurrentRowNo);   //highlight row on page  NEED?
+            }
+
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+
+        }
+        catch (err) {
+            alert("err message " + err.message);
+        }
+
+    }
+
+
+
+
+
+    function GenerateCodeinMaster() {
+        //Doneit();  //test only
+        LayoutShowProgressBar();  //found in _Layout.cshtml
+
+
+        //ArrayDupChk();
+
+
+        //$("#VSOLUTIONDetailForm #aspxrazorcombo").val($("#aspxrazorcombo_in").val());
+        //$("#VSOLUTIONDetailForm #adoefcombo").val($("#adoefcombo_in").val());
+        //$("#VSOLUTIONDetailForm #vscombo").val($("#vscombo_in").val());
+        document.getElementById('tablename').value = document.getElementById('tablenameSelect').value;
+
+        if (document.getElementById('tablename').value.trim() == "") {
+            alert("Please enter Table Table.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        if (document.getElementById('progname').value.trim() == "") {
+            alert("Please enter Program Name.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+
+        if (document.getElementById('primarykeysel').value.trim() == "") {
+            alert("Please enter all columns.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        else {
+            document.getElementById('primarykey').value = GetColName(document.getElementById('primarykeysel').value.trim());
+            document.getElementById('primarykeytype').value = GetColType(document.getElementById('primarykeysel').value.trim());
+            //return false;
+        }
+
+
+        if (document.getElementById('column1sel').value.trim() == "") {
+            alert("Please enter all columns.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        else {
+            document.getElementById('column1').value = GetColName(document.getElementById('column1sel').value.trim());
+            document.getElementById('column1type').value = GetColType(document.getElementById('column1sel').value.trim());
+            //return false;
+
+        }
+
+
+        if (document.getElementById('column2sel').value.trim() == "") {
+            alert("Please enter all columns.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        else {
+            document.getElementById('column2').value = GetColName(document.getElementById('column2sel').value.trim());
+            document.getElementById('column2type').value = GetColType(document.getElementById('column2sel').value.trim());
+            //return false;
+
+        }
+
+
+        if (document.getElementById('column3sel').value.trim() == "") {
+            alert("Please enter all columns.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        else {
+            document.getElementById('column3').value = GetColName(document.getElementById('column3sel').value.trim());
+            document.getElementById('column3type').value = GetColType(document.getElementById('column3sel').value.trim());
+            //return false;
+
+        }
+
+
+        if (document.getElementById('column4sel').value.trim() == "") {
+            alert("Please enter all columns.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+        else {
+            document.getElementById('column4').value = GetColName(document.getElementById('column4sel').value.trim());
+            document.getElementById('column4type').value = GetColType(document.getElementById('column4sel').value.trim());
+            //return false;
+
+        }
+
+
+
+        //check for duplicate fields
+        var arrPK = document.getElementById('primarykey').value;
+        var arrcol1 = document.getElementById('column1').value;
+        var arrcol2 = document.getElementById('column2').value;
+        var arrcol3 = document.getElementById('column3').value;
+        var arrcol4 = document.getElementById('column4').value;
+
+        var i, a = [arrPK, arrcol1, arrcol2, arrcol3, arrcol4];
+        for (i = 0; i < a.length; ++i) {
+            if (a.indexOf(a[i]) != a.lastIndexOf(a[i])) {
+                alert("Duplicate field name found!");
+                LayoutHideProgressBar();  //found in _Layout.cshtml
+                return false;
+            }
+                
+        }
+
+
+
+        formData828 = $("#MasterAddkForm").serialize();   //sets up Primary Key
+        //alert("formData " + formData828);
+
+        setTimeout(PostScriptGenCodeServer, 30);
+    }
+    //Get record details from Database and then display on form
+    function PostScriptGenCodeServer() {
+        //Url.Action(Action, Contoller)
+        //alert("in post");
+        var Names130DetailURL7 = '@Url.Action("GenerateCodePAREXIST", "ENTITYTABLE")';
+        $.post(Names130DetailURL7, formData828, function (data, textStatus) {
+            DisplayGenCodeRecord(data);
+        }, "json");
+
+
+    }
+    function DisplayGenCodeRecord(jsonScript) {
+        LayoutHideProgressBar();  //found in _Layout.cshtml
+        var returnMessage = "";
+
+        for (i = 0; i < jsonScript.ReturnMessage.length; i++) {
+            //returnMessage = returnMessage + jsonScript.ReturnMessage[i] + "<br>";
+            returnMessage = returnMessage + jsonScript.ReturnMessage[i] + "\n";
+        }
+
+        if (jsonScript.ReturnStatus == true) {
+            alert("Generated Code successfully Built.");
+            Doneit();
+        }
+        else {
+            alert("" + returnMessage);
+        }
+    }
+
+    function Doneit() {
+        window.location.href = urlInsert7;
+
+    }
+
+    function GenerateCodeinDELMaster() {
+        var txt;
+        var r = confirm("Continue to Delete programs, But NOT Database Table?");
+        if (r == true) {
+            // txt = "You pressed OK!";
+            GenerateCodeinDELStart();
+        } else {
+            // txt = "You pressed Cancel!";
+        }
+
+    }
+
+    function GenerateCodeinDELStart() {
+        LayoutShowProgressBar();  //found in _Layout.cshtml
+
+        if (document.getElementById('progname').value.trim() == "") {
+            alert("Please enter Program Name.");
+            LayoutHideProgressBar();  //found in _Layout.cshtml
+            return false;
+        }
+
+        formData8288 = $("#MasterAddkForm").serialize();   //sets up Primary Key
+        //alert("formData " + formData8288);
+
+        setTimeout(PostScriptGenCodeServerDEL, 30);
+    }
+
+    function PostScriptGenCodeServerDEL() {
+        //Url.Action(Action, Contoller)
+        //alert("in post del");
+        var Names130DetailURL77 = '@Url.Action("GenerateCodeDELEXIST", "ENTITYTABLE")';
+        //$.post(Names130DetailURL77, formData8288, function (data, textStatus) {
+          //  DisplayGenCodeRecordDEL(data);
+        //}, "json");
+
+
+
+        $.ajax(Names130DetailURL77, {
+                    type: 'POST',
+                    data: formData8288,
+                    datatype: 'json',
+                    success: function (data, status, xhr) {
+                       DisplayGenCodeRecordDEL(data);
+                    },
+                    error: function (jqXhr, textStatus, errorMessage) {
+                        alert(" errorMessage is:- " + errorMessage + "\n Xhr.status is :- " + jqXhr.status + "\n Xhr.responseText is :- " + jqXhr.responseText + "\n textStatus is :- " + textStatus);
+                    }
+
+         });
+
+
+    }
+
+
+    function DisplayGenCodeRecordDEL(jsonScript) {
+        //alert("in post after jsonScript is " + jsonScript);
+        LayoutHideProgressBar();  //found in _Layout.cshtml
+        var returnMessage = "";
+
+        for (i = 0; i < jsonScript.ReturnMessage.length; i++) {
+            //returnMessage = returnMessage + jsonScript.ReturnMessage[i] + "<br>";
+            returnMessage = returnMessage + jsonScript.ReturnMessage[i] + "\n";
+        }
+
+        if (jsonScript.ReturnStatus == true) {
+            alert("Generated Code successfully Deleted.");
+            DoneitDEL();
+        }
+        else {
+            alert("" + returnMessage);
+        }
+    }
+
+    function DoneitDEL() {
+        window.location.href = urlInsert7DEL;   //see up top for url
+    }
+
+
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    //Utilities
+    //--------------------------------------------------------------------------------------------------------------------------------------
+    function GetColType(PKIDin) {
+
+        var OpdropOPIDin = GetColTypeName(PKIDin);
+
+        OpdropOPIDin = OpdropOPIDin.toLowerCase();
+
+        switch (OpdropOPIDin) {
+            case "varchar":
+                OpdropOPID = "Char";
+                break;
+            case "nvarchar":
+                OpdropOPID = "Char";
+                break;
+            case "char":
+                OpdropOPID = "Char";
+                break;
+            case "text":
+                OpdropOPID = "Char";
+                break;
+            case "nchar":
+                OpdropOPID = "Char";
+                break;
+            case "ntext":
+                OpdropOPID = "Char";
+                break;
+            case "datetimeoffset":
+                OpdropOPID = "Date";
+                break;
+            case "smalldatetime":
+                OpdropOPID = "Date";
+                break;
+            case "datetime":
+                OpdropOPID = "Date";
+                break;
+            case "datetime2":
+                OpdropOPID = "Date";
+                break;
+            case "date":
+                OpdropOPID = "Date";
+                break;
+            case "time":
+                OpdropOPID = "Date";
+                break;
+            case "int":
+                OpdropOPID = "Integer";
+                break;
+            case "bigint":
+                OpdropOPID = "IntegerBig";
+                break;
+            case "smallint":
+                OpdropOPID = "Integer";
+                break;
+            case "tinyint":
+                OpdropOPID = "Integer";
+                break;
+            case "bit":
+                OpdropOPID = "Integer";
+                break;
+            case "money":
+                OpdropOPID = "Decimal";
+                break;
+            case "decimal":
+                OpdropOPID = "Decimal";
+                break;
+            case "double":
+                OpdropOPID = "Decimal";
+                break;
+            case "float":
+                OpdropOPID = "Decimal";
+                break;
+            default:
+                OpdropOPID = "Char";
+        }
+
+
+        //if (OpdropOPID == "varchar") {
+        //OpdropOPID = "Char";
+        //}
+
+        return OpdropOPID;
+
+    }
+
+    function GetColName(PKID) {
+        //alert("rowid is " + row_ID);
+        //Next lines are not used, but a method of getting a substring part
+        var OpdropLen = 0;
+        var OpdropIndex = 0;
+        var OpdropPERMITID = "";
+        var OpdropOPID = "";
+        OPIDget = PKID;   //eg 151~7879022111  -  Contact_ID~MRN
+        //alert("OpPermits is " + OPIDget);
+        if (OPIDget.length) {
+            OpdropLen = OPIDget.length;
+            //alert("OpPermits len is " + OpdropLen);
+            if (OpdropLen > 0) {
+                OpdropIndex = OPIDget.indexOf("~");
+                //alert("OpPermits index is " + OpdropIndex);
+                if (OpdropIndex > 0) {
+                    OpdropPERMITID = OPIDget.substring(0, OpdropIndex);
+                    //alert("Field Name is " + OpdropPERMITID);
+                    OpdropOPID = OPIDget.substr(OpdropIndex + 1, OpdropLen - (OpdropIndex + 1));
+                    //alert("Data Type is " + OpdropOPID);
+                }
+            }
+        }    //if (OPIDget.length) 
+        //alert("OpPermits is " + OPIDget);
+        //END - Next lines are not used, but a method of getting a substring part
+
+        return OpdropPERMITID;
+    }
+
+
+    function GetColTypeName(PKID) {
+        //alert("rowid is " + row_ID);
+        //Next lines are not used, but a method of getting a substring part
+        var OpdropLen = 0;
+        var OpdropIndex = 0;
+        var OpdropPERMITID = "";
+        var OpdropOPID = "";
+        OPIDget = PKID;   //eg 151~7879022111  -  Contact_ID~MRN
+        //alert("OpPermits is " + OPIDget);
+        if (OPIDget.length) {
+            OpdropLen = OPIDget.length;
+            //alert("OpPermits len is " + OpdropLen);
+            if (OpdropLen > 0) {
+                OpdropIndex = OPIDget.indexOf("~");
+                //alert("OpPermits index is " + OpdropIndex);
+                if (OpdropIndex > 0) {
+                    OpdropPERMITID = OPIDget.substring(0, OpdropIndex);
+                    //alert("Field Name is " + OpdropPERMITID);
+                    OpdropOPID = OPIDget.substr(OpdropIndex + 1, OpdropLen - (OpdropIndex + 1));
+                    //alert("Data Type is " + OpdropOPID);
+                }
+            }
+        }    //if (OPIDget.length) 
+        //alert("OpPermits is " + OPIDget);
+        //END - Next lines are not used, but a method of getting a substring part
+
+        return OpdropOPID;
+    }
+
+    function ArrayDupChk() {
+        var i, a = ["color", "radius", "y", "x1", "x2", "x3", "radiusn"];
+        for (i = 0; i < a.length; ++i) {
+            if (a.indexOf(a[i]) != a.lastIndexOf(a[i]))
+                alert("Duplicate found!");
+        }
+
+    }
+  
+
+
+</script>
+
+
+<div id="MasterAddkFormtopdiv" style="border: thin solid #C0C0C0; overflow: hidden;">
+
+
+    <form method="post" action="./" id="MasterAddkForm">
+
+        @Html.AntiForgeryToken()
+
+
+        <div style="font-size: 1px;color: white;height: 1px;" class="device-xs visible-xs">.</div>
+        <div style="font-size: 1px;color: white;height: 1px;" class="device-sm visible-sm">.</div>
+        <div style="font-size: 1px;color: white;height: 1px;" class="device-md visible-md">.</div>
+        <div style="font-size: 1px;color: white;height: 1px;" class="device-lg visible-lg">.</div>
+
+        <input name="PDFFlag" type="hidden" value="ALL" />
+        <input name="id" type="hidden" value="" />
+        <input name="TimeDiff" type="hidden" value="" />
+
+        <input name="CurrentPageNumber" type="hidden" value="" />
+        <input name="CurrentRowNumber" type="hidden" value="" />
+        <input name="SortBy" type="hidden" value="" />
+        <input name="SortAscendingDescending" type="hidden" value="" />
+        <input name="PageSize" type="hidden" value="" />
+        <input name="PreviframeWidth" type="hidden" value="" />
+        <input name="PreviframeHeight" type="hidden" value="" />
+        <input name="ScrollWidthh" type="hidden" value="" />
+        <input name="OrigScreenWidthh" type="hidden" value="" />
+        <input name="ScrollPosition" type="hidden" value="" />
+
+        <input name="CurrentProgName" type="hidden" value="" />
+        <input name="CurrentChildNo" type="hidden" value="" />
+        <input name="ParenterProgName" type="hidden" value="" />
+        <input name="ToperProgName" type="hidden" value="" />
+        <input name="ChildtableName" type="hidden" value="" />
+
+
+        <input name="primarykey" type="hidden" id="primarykey" value="" />
+        <input name="primarykeytype" type="hidden" id="primarykeytype" value="" />
+
+        <input name="column1" type="hidden" id="column1" value="" />
+        <input name="column1type" type="hidden" id="column1type" value="" />
+
+        <input name="column2" type="hidden" id="column2" value="" />
+        <input name="column2type" type="hidden" id="column2type" value="" />
+
+        <input name="column3" type="hidden" id="column3" value="" />
+        <input name="column3type" type="hidden" id="column3type" value="" />
+
+        <input name="column4" type="hidden" id="column4" value="" />
+        <input name="column4type" type="hidden" id="column4type" value="" />
+
+
+        <input name="Table_Name" type="hidden" value="" />
+
+
+        <div style="height:10px;">
+            &nbsp;
+        </div>
+
+        <table style="width:100%;">
+            <tr>
+                <td align="center">
+                    <span style="font-weight:bold; font-family:Arial;font-size:18px;padding-right:1px;color:navy;">Add Parent Grid</span>
+                    <div style="font-weight:normal; font-family:Arial;font-size:13px;color:black;">(Will use existing DB Table)</div>
+                </td>
+            </tr>
+        </table>
+
+        <div style="height:35px;">
+            &nbsp;
+        </div>
+
+        <div id="Div1" style="padding-left: 0px; margin-left: 20px;margin-right:20px; display: block; font-size: 10px; background-color: white;">
+            <table border="0" style="background-color: white; width: 100%; border: solid 1px white">
+                <tr>
+                    <td style="padding: 2px 0px 2px 0px; text-align: left; width: 100%;">
+                        <span style="font-size: 12px; display: inline-block; font-weight: bold;color: navy;">Parent Table:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input style="font-size: 13px;display: none;font-weight: bold;color: blue;width:160px;" name="tablename" type="text" id="tablename" value="" />
+
+                        <select name="tablenameSelect" id="tablenameSelect" style="font-size: 13px" onchange="MasterAddkStartSearch();">
+                            @foreach (var recList2377 in (IEnumerable<appMODEL.MasterAddkType>)ViewData["TABLEListin2"])
+                            {
+                                <option style="font-size: 13px" value="@(Html.Encode(recList2377.MasterAddkTypeName))">@(Html.Encode(recList2377.MasterAddkTypeName))</option>
+                            }
+                        </select>
+
+                        <span style="font-size: 11px; display: inline-block; font-weight: normal;">&nbsp;&nbsp;&nbsp;</span>
+                        <br />
+                        <span style="font-size: 12px; display: inline-block; font-weight: bold;color: navy;padding-top:9px;">Program Name:</span>
+                        <input style="font-size: 13px;display: inline-block;font-weight: bold;color: blue;width:160px;" name="progname" type="text" id="progname" value="" />
+                        <span style="font-size: 11px; display: inline-block; font-weight: normal;padding-bottom:12px;">&nbsp;</span>
+                    </td>
+
+                </tr>
+            </table>
+
+        </div>
+
+
+    </form>
+
+
+    <!-- next DIV is where the actual grid of records are displayed from the AJAX call -->
+    <div id="MasterAddkDivSearchResults">
+        <partial name="MasterAddkResults" model="Model" />
+    </div>
+
+
+</div>
+
+
+
+<!-- Next Divs are key to whole App -->
+<div id="MasterAddkModalk" class="modalk">
+    <div class="modal-contentk">
+        <div class="modal-bodyk">
+            <div style="height: 1px;">
+                &nbsp;
+            </div>
+            <table border="0" style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <div style="border-radius: 5px;height: 32px;border: 1px solid #8c8c8c;background: #cccccc;background: linear-gradient(#e6e6e6, #bfbfbf);background: -webkit-linear-gradient(#e6e6e6, #bfbfbf);">
+                            <table border="0" style="width:100%;height: 30px;">
+                                <tr>
+                                    <td align="left" style="width: 50%;">
+                                        <span id="MasterAddkmodalkTitle" style="padding-left: 10px;font-size:11px;color: black;font-weight:bold;">test</span>
+                                    </td>
+                                    <td align="right" style="width: 50%;">
+                                        <input style="font-size:10px;display: none;" class="btn btn-sm" type="button" value="X" onclick="MasterAddkCloseK();" />
+                                        <input style="font-size:10px;color: black;display: none;" type="button" value="X" onclick="MasterAddkCloseK();" />
+                                        <a href="javascript:void(0)" title="Close" class="closebtn" style="color: black;font-weight:bold;" onclick="MasterAddkCloseK();">&times;</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="height: 7px;">
+                &nbsp;
+            </div>
+            <div id="ModalMasterAddkOverlayK">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirm-dialogMasterAddk" style="display: none; font-family: Arial; font-size: 9px; font-weight: normal">
+    <textarea rows="3" cols="1" id="confirm-dialogTextMasterAddk" name="confirm-dialogTextMasterAddk" readonly="readonly" style="border-width: 0px; font-family: Arial; font-size: 11px; font-style: normal; color: #800080; width: 180px; height: 50px; max-height: 50px; min-height: 50px; overflow: hidden; display:none;"></textarea>
+</div>
+
+
+
